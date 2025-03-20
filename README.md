@@ -114,11 +114,15 @@ LIMIT 5;
 ### 5. Identify the Longest Movie
 
 ```sql
-SELECT 
-    *
+    
+SELECT *
 FROM netflix
-WHERE type = 'Movie'
-ORDER BY SPLIT_PART(duration, ' ', 1)::INT DESC;
+WHERE CAST(SPLIT_PART(duration, ' ', 1) AS INTEGER) = (
+    SELECT MAX(CAST(SPLIT_PART(duration, ' ', 1) AS INTEGER))
+    FROM netflix
+    WHERE duration LIKE '%min'
+);
+
 ```
 
 **Objective:** Find the movie with the longest duration.
@@ -153,8 +157,11 @@ WHERE director_name = 'Rajiv Chilaka';
 ```sql
 SELECT *
 FROM netflix
-WHERE type = 'TV Show'
-  AND SPLIT_PART(duration, ' ', 1)::INT > 5;
+WHERE 
+	type = 'TV Show'
+	AND 
+	SPLIT_PART(duration, ' ', 1) ::numeric > 5  
+	-- same as -> CAST(SPLIT_PART(duration, ' ', 1) AS INTEGER))
 ```
 
 **Objective:** Identify TV shows with more than 5 seasons.
@@ -206,10 +213,15 @@ WHERE listed_in LIKE '%Documentaries';
 ### 12. Find How Many Movies Actor 'Salman Khan' Appeared in the Last 10 Years
 
 ```sql
-SELECT * 
-FROM netflix
-WHERE casts LIKE '%Salman Khan%'
-  AND release_year > EXTRACT(YEAR FROM CURRENT_DATE) - 10;
+SELECT * FROM netflix
+WHERE 
+	castS ILIKE '%salman khan%'
+	AND 
+	-- TO_DATE(date_added, 'Month DD YYYY') >= CURRENT_DATE - INTERVAL '10 years'
+	release_year > EXTRACT(YEAR FROM CURRENT_DATE) -10
+
+
+-- SELECT CURRENT_DATE - INTERVAL '10 Years'
 ```
 
 **Objective:** Count the number of movies featuring 'Salman Khan' in the last 10 years.
