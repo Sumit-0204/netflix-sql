@@ -162,7 +162,7 @@ WHERE
 	country ILIKE '%India%'
 GROUP BY 1
 ORDER BY 2 DESC
-LIMIT 5;
+LIMIT 10;
 
 
 -- 14. mark description where 'kill' or 'violence' used mark them as bad-content and else good
